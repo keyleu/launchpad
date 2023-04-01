@@ -4,7 +4,7 @@ use crate::common_setup::contract_boxes::{
 use crate::common_setup::msg::MinterCollectionResponse;
 use crate::common_setup::msg::MinterSetupParams;
 use crate::common_setup::setup_minter::common::parse_response::build_collection_response;
-use cosmwasm_std::{coin, coins, Addr};
+use cosmwasm_std::{coin, coins, Addr, Coin};
 use cw_multi_test::Executor;
 use sg2::msg::CreateMinterMsg;
 use sg2::msg::{CollectionParams, Sg2ExecuteMsg};
@@ -23,11 +23,13 @@ pub fn build_init_msg(
     init_msg: Option<VendingMinterInitMsgExtension>,
     mut msg: CreateMinterMsg<VendingMinterInitMsgExtension>,
     num_tokens: u32,
+    mint_price: Coin,
 ) -> VendingMinterInitMsgExtension {
     match init_msg {
         Some(init_msg_from_params) => init_msg_from_params,
         None => {
-            msg.init_msg.mint_price = coin(MINT_PRICE, NATIVE_DENOM);
+            // msg.init_msg.mint_price = coin(MINT_PRICE, NATIVE_DENOM);
+            msg.init_msg.mint_price = mint_price;
             msg.init_msg.num_tokens = num_tokens;
             msg.init_msg
         }
@@ -61,7 +63,12 @@ pub fn setup_minter_contract(setup_params: MinterSetupParams) -> MinterCollectio
         )
         .unwrap();
     let mut msg = mock_create_minter(splits_addr, collection_params, start_time);
-    msg.init_msg = build_init_msg(init_msg, msg.clone(), num_tokens);
+    msg.init_msg = build_init_msg(
+        init_msg,
+        msg.clone(),
+        num_tokens,
+        coin(MINT_PRICE, NATIVE_DENOM),
+    );
     msg.collection_params.code_id = sg721_code_id;
     msg.collection_params.info.creator = minter_admin.to_string();
     let creation_fee = coins(CREATION_FEE, NATIVE_DENOM);
