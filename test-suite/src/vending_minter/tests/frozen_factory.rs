@@ -104,7 +104,7 @@ fn create_minter_with_ibc_asset_mint_price() {
     let start_time = Timestamp::from_nanos(GENESIS_MINT_START_TIME);
     let mut msg = mock_create_minter(None, mock_collection_params(), Some(start_time));
     let ibc_denom = "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858";
-    msg.init_msg = build_init_msg(None, msg.clone(), num_tokens, coin(0u128, ibc_denom));
+    msg.init_msg = build_init_msg(None, msg.clone(), num_tokens, coin(1000u128, ibc_denom));
     msg.collection_params.info.creator = creator.to_string();
     let creation_fee = coins(CREATION_FEE, NATIVE_DENOM);
     let msg = Sg2ExecuteMsg::CreateMinter(msg);

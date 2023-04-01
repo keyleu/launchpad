@@ -90,10 +90,6 @@ pub fn execute_create_minter(
         });
     }
 
-    if NATIVE_DENOM != msg.init_msg.mint_price.denom && !msg.init_msg.mint_price.amount.is_zero() {
-        return Err(ContractError::BaseError(BaseContractError::InvalidDenom {}));
-    }
-
     let wasm_msg = WasmMsg::Instantiate {
         admin: Some(info.sender.to_string()),
         code_id: params.code_id,
